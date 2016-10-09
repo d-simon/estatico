@@ -25,9 +25,7 @@ var taskName = 'js:qunit',
 		srcTemplatesBase: './build/',
 		srcQUnit: './node_modules/qunitjs/qunit/qunit.js',
 		destTemplates: './.qunit/',
-		srcPolyfills: [
-			'./node_modules/phantomjs-polyfill/bind-polyfill.js'
-		],
+		srcPolyfills: [],
 		watch: [
 			'source/modules/**/*.test.js',
 			'source/demo/modules/**/*.test.js'
@@ -115,7 +113,9 @@ gulp.task(taskName, function(cb) {
 				}).on('error', helpers.errors))
 				.on('finish', function() {
 					// Remove .qunit tmp folder
-					del(taskConfig.destTemplates, cb);
+					del(taskConfig.destTemplates).then(function() {
+						cb();
+					});
 				});
 		});
 });

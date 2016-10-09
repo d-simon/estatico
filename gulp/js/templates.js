@@ -40,7 +40,9 @@ gulp.task(taskName, function(cb) {
 		.pipe(tap(function() {
 			c++;
 		}))
-		.pipe(handlebars().on('error', helpers.errors))
+		.pipe(handlebars({
+			handlebars: helpers.handlebars
+		}).on('error', helpers.errors))
 		.pipe(defineModule('plain', { // RequireJS: use 'amd' over plain and uncomment lines below
 			// require: {
 			// 	Handlebars: 'handlebars'

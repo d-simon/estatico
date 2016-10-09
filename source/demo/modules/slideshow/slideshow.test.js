@@ -6,12 +6,12 @@
 		instance;
 
 	// Setup QUnit module
-	module('slideshow', {
-		setup: function() {
+	QUnit.module('slideshow', {
+		beforeEach: function() {
 			instance = $node.data(name + '-instance');
 		},
 
-		teardown: function() {
+		afterEach: function() {
 			instance.destroy();
 
 			// Re-init
@@ -21,15 +21,15 @@
 		}
 	});
 
-	test('Test correct plugin registration', function(assert) {
-		expect(2);
+	QUnit.test('Test correct plugin registration', function(assert) {
+		assert.expect(2);
 
 		assert.equal(typeof instance, 'object', 'Plugin instance is an object');
 		assert.equal(typeof $.fn[name], 'function', 'Plugin function registered to jQuery');
 	});
 
-	test('Test correct plugin init', function(assert) {
-		expect(7);
+	QUnit.test('Test correct plugin init', function(assert) {
+		assert.expect(7);
 
 		var $buttons = $node.find('button[data-' + name + ']'),
 			events = $._data($node.get(0), 'events') || {},
@@ -62,8 +62,8 @@
 		assert.equal(mqEvent.length, 1, 'Media-query event set');
 	});
 
-	test('Test correct plugin destroy', function(assert) {
-		expect(5);
+	QUnit.test('Test correct plugin destroy', function(assert) {
+		assert.expect(5);
 
 		instance.destroy();
 
@@ -95,8 +95,8 @@
 		assert.equal(mqEvent.length, 0, 'Media-query event unset');
 	});
 
-	test('Test whether clicking prev button updates "currentItem" property', function(assert) {
-		expect(1);
+	QUnit.test('Test whether clicking prev button updates "currentItem" property', function(assert) {
+		assert.expect(1);
 
 		var $button = $node.find('button.next');
 
@@ -105,8 +105,8 @@
 		assert.equal(instance.currentItem, 1, 'currentItem is 1');
 	});
 
-	test('Test whether "show" method updates "currentItem" property', function(assert) {
-		expect(1);
+	QUnit.test('Test whether "show" method updates "currentItem" property', function(assert) {
+		assert.expect(1);
 
 		instance.show(2);
 

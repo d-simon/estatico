@@ -50,7 +50,7 @@ gulp.task(taskName, function(cb) {
 				message: 'Do you want to create a complete build before starting the server?',
 				default: true
 			}
-		], function(answers) {
+		]).then(function(answers) {
 			callback(!answers.createBuild, cb);
 		});
 	} else {
