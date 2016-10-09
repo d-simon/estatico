@@ -65,6 +65,22 @@ var taskName = 'scaffold',
 			replaceContent: function(content, config) {
 				return content.replace(/\{\{name\}\}/g, config.name)
 					.replace(/\{\{originalName\}\}/g, config.originalName);
+			},
+			transpileTempalteFromHandlebarsToTwig: function(code) {
+				return code
+					.replace("&lt;", '<')
+					.replace("&gt;", '>')
+					.replace(/\{\{#if([^\}]+)\}\}/g, '{% if$1 %}')
+					.replace(/\{\{\/if\}\}/g, '{% endif %}')
+					.replace(/\{\{#content \"([^\}]+)\"\}\}/g, '{% block $1 %}')
+					.replace(/\{\{\/content\}\}/g, '{% endblock %}')
+					.replace(/\{\{#extend([^\}]+)\}\}/g, '{% extends$1 %}')
+					.replace(/\{\{\/extend\}\}/g, '')
+					.replace(/\{\{#each([^\}]+)\}\}/g, '{% for item in $1 %}')
+					.replace(/\{\{\/each\}\}/g, '{% endfor %}')
+					.replace(/\{\{this./g, '{{item.')
+					.replace(/\{\{\&gt;([^"]+)("[^"].+")([^\}]+)\}\}/g, '{% include $2 with$3 %}')
+					.replace(/\{\{([^\}]+)\}\}/g, '{{ $1 }}');
 			}
 		}
 	},
@@ -134,6 +150,24 @@ var taskName = 'scaffold',
 					file.contents = new Buffer(content);
 				}
 			}))
+
+			// Convert Handlebars to Twig template
+			.pipe(tap(function(file) {
+				var match = (path.extname(file.path) === '.hbs');
+
+				if (match) {
+					var content = file.contents.toString();
+
+					content = config.scaffold.transpileTempalteFromHandlebarsToTwig(content);
+
+					file.contents = new Buffer(content);
+
+					// Rename file extension
+					file.path = path.join(path.dirname(file.path), path.basename(file.path).replace(path.extname(file.path), '.twig'));
+
+				}
+			}))
+
 
 			// Skip creation of SCSS file if specified
 			.pipe(through.obj(function(file, enc, done) {
